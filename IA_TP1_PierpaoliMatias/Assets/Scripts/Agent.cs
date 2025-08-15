@@ -7,72 +7,48 @@ class Agent : MonoBehaviour
 	{
 		Patrol,
 		Chase,
-		Attack,
-		BackToPatrol
+		Explode
 	}
 
 	public enum Flags
 	{
-		OnSeeTarget,
 		OnTargetReach,
-		OnTargetLost,
-		OnTargetDied,
-		OnBackToPatrolReach
+		OnTargetNear,
+		OnTargetLost
 	}
 
 	public FSM<States, Flags> fsm;
 
+	public Transform target;
+	public float speed;
+	public float explodeDistance;
+	public float lostDistance;
+
+	public Transform myPoint1;
+	public Transform myPoint2;
+	public float chaseDistance;
+
 	public void Start()
 	{
 		fsm = new FSM<States, Flags>(States.Patrol);
+		fsm.AddState<PatrolState>(States.Patrol,
+			onTickParameters: () => new object[] {myPoint1, myPoint2, transform, target, speed, chaseDistance, Time.deltaTime}
+			);
 
-		fsm.AddState<PatrolState>(States.Patrol);
-		fsm.AddState<ChaseState>(States.Chase);
-		fsm.AddState<AttackState>(States.Attack);
-		fsm.AddState<BackToPatrolState>(States.BackToPatrol);
+		fsm.AddState<ChaseState>(States.Chase,
+			onTickParameters: () => new object[] { transform, target, speed, explodeDistance, lostDistance, Time.deltaTime }
+			);
 
-		fsm.SetTransition(States.Patrol, Flags.OnSeeTarget, States.Chase);
-		fsm.SetTransition(States.Chase, Flags.OnTargetReach, States.Attack);
-		fsm.SetTransition(States.Chase, Flags.OnTargetLost, States.BackToPatrol);
-		fsm.SetTransition(States.Attack, Flags.OnTargetDied, States.BackToPatrol);
-		fsm.SetTransition(States.Attack, Flags.OnTargetLost, States.Chase);
-		fsm.SetTransition(States.BackToPatrol, Flags.OnBackToPatrolReach, States.Patrol);
-		fsm.SetTransition(States.BackToPatrol, Flags.OnSeeTarget, States.Chase);
+		//fsm.AddState<ExlodedState>(States.Explode);
+
+		fsm.SetTransition(States.Patrol, Flags.OnTargetNear, States.Chase, () => { Debug.Log("Te vi"); });
+		fsm.SetTransition(States.Chase, Flags.OnTargetNear, States.Chase);
+		fsm.SetTransition(States.Chase, Flags.OnTargetLost, States.Patrol);
 	}
 
 	private void Update()
 	{
 		fsm.Tick();
-	}
-
-	[ContextMenu("OnSeeTarget")]
-	public void TriggerOnSeeTarget()
-	{
-		fsm.Transition(Flags.OnSeeTarget);
-	}
-
-	[ContextMenu("OnTargetReach")]
-	public void TriggerOnTargetReach()
-	{
-		fsm.Transition(Flags.OnTargetReach);
-	}
-
-	[ContextMenu("OnTargetLost")]
-	public void TriggerOnTargetLost()
-	{
-		fsm.Transition(Flags.OnTargetLost);
-	}
-
-	[ContextMenu("OnTargetDied")]
-	public void TriggerOnTargetDied()
-	{
-		fsm.Transition(Flags.OnTargetDied);
-	}
-
-	[ContextMenu("OnBackToPatrolReach")]
-	public void TriggerOnBackToPatrolReach()
-	{
-		fsm.Transition(Flags.OnBackToPatrolReach);
 	}
 	
 }
