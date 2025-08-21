@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class FSM<StateType, FlagType>
     where StateType : Enum
@@ -13,7 +14,7 @@ public class FSM<StateType, FlagType>
     private Dictionary<int, Func<object[]>> behaviourOnEnterParameters;
     private Dictionary<int, Func<object[]>> behaviourOnExitParameters;
 
-    private (int destinationState, Action onTrnasition)[,] transitions;
+    private (int destinationState, Action onTransition)[,] transitions;
 
     ParallelOptions ParallelOptions = new ParallelOptions() { MaxDegreeOfParallelism = 32 };
 
@@ -21,7 +22,7 @@ public class FSM<StateType, FlagType>
         (behaviourOnTickParameters[currentState]?.Invoke());
     private BehaviourActions GetCurrentOnEnterBehaviour => states[currentState].GetOnEnterBehaviours
         (behaviourOnEnterParameters[currentState]?.Invoke());
-    private BehaviourActions GetCurrentOnExitBehaviour => states[currentState].GetOnExitBehaviour
+    private BehaviourActions GetCurrentOnExitBehaviour => states[currentState].GetOnExitBehaviours
         (behaviourOnExitParameters[currentState]?.Invoke());
 
     public FSM(StateType defaultState)
@@ -51,6 +52,11 @@ public class FSM<StateType, FlagType>
         if (!states.ContainsKey(Convert.ToInt32(stateIndex)))
         {
             TState state = new TState();
+
+            ValidateParameters(state.OnEnterParameterTypes, onEnterParameters);
+            ValidateParameters(state.OnTickParameterTypes, onTickParameters);
+            ValidateParameters(state.OnExitParameterTypes, onExitParameters);
+
             state.OnFlag += Transition;
             states.Add(Convert.ToInt32(stateIndex), state);
             behaviourOnTickParameters.Add(Convert.ToInt32(stateIndex), onTickParameters);
@@ -77,7 +83,7 @@ public class FSM<StateType, FlagType>
         }
         if (transitions[Convert.ToInt32(currentState), Convert.ToInt32(flag)].destinationState != UNNASSIGNED_TRANSITION)
         {
-            transitions[currentState, Convert.ToInt32(flag)].onTrnasition?.Invoke();
+            transitions[currentState, Convert.ToInt32(flag)].onTransition?.Invoke();
             currentState = transitions[Convert.ToInt32(currentState), Convert.ToInt32(flag)].destinationState;
             ExcecuteBehaviour(GetCurrentOnEnterBehaviour);
         }
@@ -93,7 +99,7 @@ public class FSM<StateType, FlagType>
 
     private void ExcecuteBehaviour(BehaviourActions behaviourActions)
     {
-        if (behaviourActions.Equals(default))
+        if (behaviourActions == null)
             return;
 
         int excecutionOrder = 0;
@@ -135,5 +141,32 @@ public class FSM<StateType, FlagType>
         }
 
         behaviourActions.TransitionBehaviour?.Invoke();
+        ConcurrentPool.Release(behaviourActions);
+    }
+     
+    public void ValidateParameters(Type[] expectedParameters, Func<object[]> recivedParameters)
+    {
+        if (expectedParameters.Length == 0 && recivedParameters == null)
+            return;
+
+        List<Type> recivedParametersTypes = new List<Type>();
+        foreach (object parameter in recivedParameters.Invoke())
+        {
+            recivedParametersTypes.Add(parameter.GetType());
+        }
+
+        if (expectedParameters.Length != recivedParametersTypes.Count)
+        {
+            throw new ArgumentException("Number of parameters different from expected");
+        }
+
+        for (int i = 0; i < expectedParameters.Length; i++)
+        {
+            if (!expectedParameters[i].IsAssignableFrom(recivedParametersTypes[i]))
+            {
+                throw new InvalidCastException("Type " + recivedParametersTypes[i].Name + " cannot be assigned to " + expectedParameters[i].Name);
+            }
+
+        }
     }
 }
