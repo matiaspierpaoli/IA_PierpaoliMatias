@@ -119,37 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &171397809
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 171397810}
-  m_Layer: 0
-  m_Name: Agent Target Position
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &171397810
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 171397809}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.74, z: 30.94}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &898799965
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +132,7 @@ GameObject:
   - component: {fileID: 898799968}
   - component: {fileID: 898799967}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Mine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -268,7 +237,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1106023229}
   m_Layer: 0
-  m_Name: Agent Default Position
+  m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -283,7 +252,7 @@ Transform:
   m_GameObject: {fileID: 1106023228}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.74, z: 0}
+  m_LocalPosition: {x: 0, y: 1.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -516,7 +485,7 @@ GameObject:
   - component: {fileID: 1959467418}
   - component: {fileID: 1959467417}
   m_Layer: 0
-  m_Name: Agent
+  m_Name: Miner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -534,13 +503,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3963340c9ecfd974cb9e6983fd731154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 898799970}
+  mine: {fileID: 898799970}
+  home: {fileID: 1106023229}
   speed: 10
-  explodeDistance: 0.4
-  lostDistance: 10
-  wayPoint1: {fileID: 1106023229}
-  wayPoint2: {fileID: 171397810}
-  chaseDistance: 10
+  arrivalRadius: 0.2
+  gatherRate: 2
+  capacity: 10
+  mineAmount: 50
 --- !u!65 &1959467418
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -624,7 +593,7 @@ Transform:
   m_GameObject: {fileID: 1959467416}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.74, z: 0}
+  m_LocalPosition: {x: 0, y: 1.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -639,4 +608,3 @@ SceneRoots:
   - {fileID: 1959467421}
   - {fileID: 898799970}
   - {fileID: 1106023229}
-  - {fileID: 171397810}
