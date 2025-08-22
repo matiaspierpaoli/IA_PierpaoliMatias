@@ -1,31 +1,62 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class BreadthFirstPathfinder<NodeType> : Pathfinder<NodeType> where NodeType : INode
 {
-    // Hacer estas cuatro implementaciones
+    private ICollection<NodeType> graphRef;
+    private string name = "Breadth Fist Algorithm";
 
-    protected override int Distance(NodeType A, NodeType B)
+    public override List<NodeType> FindPath(NodeType startNode, NodeType destinationNode, ICollection<NodeType> graph)
     {
-        throw new System.NotImplementedException();
+        graphRef = graph;
+        return base.FindPath(startNode, destinationNode, graph);
     }
+
+    protected override int Distance(NodeType A, NodeType B) => 0;
+
+    public override string GetName() => name;
 
     protected override ICollection<NodeType> GetNeighbors(NodeType node)
     {
-        throw new System.NotImplementedException();
-    }
+        var result = new List<NodeType>();
 
-    protected override bool IsBloqued(NodeType node)
-    {
-        throw new System.NotImplementedException();
-    }
+        var n = node as Node<Vector2Int>;
+        var p = n.GetCoordinate();
 
-    protected override int MoveToNeighborCost(NodeType A, NodeType b)
-    {
-        throw new System.NotImplementedException();
+        var deltas = new Vector2Int[]
+        {
+            new Vector2Int( 1, 0), // derecha
+            new Vector2Int(-1, 0), // izquierda
+            new Vector2Int( 0, 1), // arriba
+            new Vector2Int( 0,-1)  // abajo
+        };
+
+        foreach (var d in deltas)
+        {
+            var q = p + d;
+
+            foreach (var candidate in graphRef)
+            {
+                var c = candidate as Node<Vector2Int>;
+                if (c.GetCoordinate() == q)
+                {
+                    result.Add(candidate);
+                    break;
+                }
+            }
+        }
+        return result;
     }
+    
+    protected override bool IsBloqued(NodeType node) => node.IsBloqued();
+
+    protected override int MoveToNeighborCost(NodeType A, NodeType B) => 1;
 
     protected override bool NodesEquals(NodeType A, NodeType B)
     {
-        throw new System.NotImplementedException();
+        var a = A as Node<Vector2Int>;
+        var b = B as Node<Vector2Int>;
+        return a.GetCoordinate() == b.GetCoordinate();
     }
+
 }

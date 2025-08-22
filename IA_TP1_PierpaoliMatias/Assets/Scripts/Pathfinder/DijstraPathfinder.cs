@@ -2,10 +2,14 @@
 
 public class DijstraPathfinder<NodeType> : Pathfinder<NodeType> where NodeType : INode
 {
+    private string name = "Dijkstra Algorithm";
+
     protected override int Distance(NodeType A, NodeType B)
     {
         throw new System.NotImplementedException();
     }
+
+    public override string GetName() => name;
 
     protected override ICollection<NodeType> GetNeighbors(NodeType node)
     {

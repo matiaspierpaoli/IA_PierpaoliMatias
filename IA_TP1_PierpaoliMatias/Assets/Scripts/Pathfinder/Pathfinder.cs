@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public abstract class Pathfinder<NodeType> where NodeType : INode
 {
-    public List<NodeType> FindPath(NodeType startNode, NodeType destinationNode, ICollection<NodeType> graph)
+    public virtual List<NodeType> FindPath(NodeType startNode, NodeType destinationNode, ICollection<NodeType> graph)
     {
         Dictionary<NodeType, (NodeType Parent, int AcumulativeCost, int Heuristic)> nodes =
             new Dictionary<NodeType, (NodeType Parent, int AcumulativeCost, int Heuristic)>();
@@ -53,7 +53,7 @@ public abstract class Pathfinder<NodeType> where NodeType : INode
                 tentativeNewAcumulatedCost += nodes[currentNode].AcumulativeCost;
                 tentativeNewAcumulatedCost += MoveToNeighborCost(currentNode, neighbor);
 
-                if (!openList.Contains(neighbor) || tentativeNewAcumulatedCost < nodes[currentNode].AcumulativeCost)
+                if (!openList.Contains(neighbor) || tentativeNewAcumulatedCost < nodes[neighbor].AcumulativeCost)
                 {
                     nodes[neighbor] = (currentNode, tentativeNewAcumulatedCost, Distance(neighbor, destinationNode));
 
@@ -83,6 +83,8 @@ public abstract class Pathfinder<NodeType> where NodeType : INode
         }
     }
 
+    public virtual string GetName() => GetType().Name;
+
     protected abstract ICollection<NodeType> GetNeighbors(NodeType node);
 
     protected abstract int Distance(NodeType A, NodeType B);
@@ -92,4 +94,5 @@ public abstract class Pathfinder<NodeType> where NodeType : INode
     protected abstract int MoveToNeighborCost(NodeType A, NodeType b);
 
     protected abstract bool IsBloqued(NodeType node);
+
 }

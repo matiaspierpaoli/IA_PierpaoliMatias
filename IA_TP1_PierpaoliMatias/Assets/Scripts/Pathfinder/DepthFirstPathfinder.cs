@@ -4,14 +4,17 @@ using UnityEngine;
 public class DepthFirstPathfinder<NodeType> : Pathfinder<NodeType> where NodeType : INode
 {
     private ICollection<NodeType> graphRef;
+    private string name = "Depth Fist Algorithm";
 
-    public new List<NodeType> FindPath(NodeType startNode, NodeType destinationNode, ICollection<NodeType> graph)
+    public override List<NodeType> FindPath(NodeType startNode, NodeType destinationNode, ICollection<NodeType> graph)
     {
         graphRef = graph;
         return base.FindPath(startNode, destinationNode, graph);
     }
 
     protected override int Distance(NodeType A, NodeType B) => 0;
+
+    public override string GetName() => name;
 
     protected override ICollection<NodeType> GetNeighbors(NodeType node)
     {
@@ -53,7 +56,7 @@ public class DepthFirstPathfinder<NodeType> : Pathfinder<NodeType> where NodeTyp
     protected override bool NodesEquals(NodeType A, NodeType B)
     {
         var a = A as Node<Vector2Int>;
-        var b2 = B as Node<Vector2Int>;
-        return a.GetCoordinate() == b2.GetCoordinate();
+        var b = B as Node<Vector2Int>;
+        return a.GetCoordinate() == b.GetCoordinate();
     }
 }
