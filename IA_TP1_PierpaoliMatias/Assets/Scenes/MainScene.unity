@@ -505,11 +505,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mine: {fileID: 898799970}
   home: {fileID: 1106023229}
+  capacity: 10
+  mineAmount: 15
   speed: 10
   arrivalRadius: 0.2
   gatherRate: 2
-  capacity: 10
-  mineAmount: 50
+  depositRate: 8
 --- !u!65 &1959467418
 BoxCollider:
   m_ObjectHideFlags: 0

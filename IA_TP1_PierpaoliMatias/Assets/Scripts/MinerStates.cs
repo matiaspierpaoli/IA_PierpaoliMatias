@@ -172,19 +172,13 @@ public sealed class DepositState : State
         {
             if (ctx.inventory == 0)
             {
-                if (ctx.inventory >= ctx.capacity && ctx.mineRemaining <= 0f)
-                {
-                    Debug.Log("Inventario lleno y mina vaciada");
-                    OnFlag?.Invoke(Agent.Flags.WorkDone);
-                }
-                else if (ctx.mineRemaining > 0f)
+                if (ctx.mineRemaining > 0f)
                 {
                     Debug.Log("Necesito seguir minando");
                     OnFlag?.Invoke(Agent.Flags.NeedToMine);
                 }
-                else if (ctx.inventory >= ctx.capacity)
+                else
                 {
-                    Debug.Log("Trabajo terminado");
                     OnFlag?.Invoke(Agent.Flags.WorkDone);
                 }
             }
